@@ -124,6 +124,18 @@ func formatOutput(results []*pb.ServerFile_Server, format string) []string {
 		if strings.Contains(format, "%s") {
 			formatted = strings.ReplaceAll(formatted, "%s", r.GetSshHost())
 		}
+		if strings.Contains(format, "%h") {
+			tokens := strings.Split(r.GetAddress(), ":")
+			if len(tokens) > 0 {
+				formatted = strings.ReplaceAll(formatted, "%h", tokens[0])
+			}
+		}
+		if strings.Contains(format, "%p") {
+			tokens := strings.Split(r.GetAddress(), ":")
+			if len(tokens) > 1 {
+				formatted = strings.ReplaceAll(formatted, "%p", tokens[1])
+			}
+		}
 		final = append(final, formatted)
 	}
 
