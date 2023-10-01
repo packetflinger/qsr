@@ -16,10 +16,9 @@ import (
 var (
 	serversFile = ".q2servers.config" // default name, should be in home directory
 	config      = flag.String("config", "", "Specify a server data file")
-	//property    = flag.String("property", "", "Output only this specific server var")
-	format = flag.String("format", "", "What should we output")
-	name   = flag.String("name", "", "Regex pattern for the name to lookup")
-	group  = flag.String("group", "", "Regex pattern for the group to lookoup")
+	format      = flag.String("format", "", "What should we output")
+	name        = flag.String("name", "", "Regex pattern for the name to lookup")
+	group       = flag.String("group", "", "Regex pattern for the group to lookoup")
 )
 
 func main() {
