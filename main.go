@@ -19,6 +19,7 @@ var (
 	format      = flag.String("format", "", "What should we output")
 	name        = flag.String("name", "", "Regex pattern for the name to lookup")
 	group       = flag.String("group", "", "Regex pattern for the group to lookoup")
+	address     = flag.String("address", "", "Regex pattern for the address to lookup")
 )
 
 func main() {
@@ -39,6 +40,14 @@ func main() {
 
 	if len(*group) > 0 {
 		got, err := findByGroup(serverpb, *group)
+		if err != nil {
+			fmt.Println(err)
+		}
+		servers = append(servers, got...)
+	}
+
+	if len(*address) > 0 {
+		got, err := findByAddress(serverpb, *address)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -104,6 +113,22 @@ func findByGroup(src *pb.ServerFile, group string) ([]*pb.ServerFile_Server, err
 			if reGroup.MatchString(g) {
 				results = append(results, s)
 			}
+		}
+	}
+
+	return results, nil
+}
+
+func findByAddress(src *pb.ServerFile, address string) ([]*pb.ServerFile_Server, error) {
+	results := []*pb.ServerFile_Server{}
+	reAddress, err := regexp.Compile(address)
+	if err != nil {
+		return results, err
+	}
+
+	for _, s := range src.GetServer() {
+		if reAddress.MatchString(s.GetAddress()) {
+			results = append(results, s)
 		}
 	}
 
