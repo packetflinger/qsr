@@ -30,12 +30,14 @@ func main() {
 		return
 	}
 	servers := []*pb.ServerFile_Server{}
+	required := 0
 	if len(*name) > 0 {
 		got, err := findByName(serverpb, *name)
 		if err != nil {
 			fmt.Println(err)
 		}
 		servers = append(servers, got...)
+		required++
 	}
 
 	if len(*group) > 0 {
@@ -44,6 +46,7 @@ func main() {
 			fmt.Println(err)
 		}
 		servers = append(servers, got...)
+		required++
 	}
 
 	if len(*address) > 0 {
@@ -52,8 +55,10 @@ func main() {
 			fmt.Println(err)
 		}
 		servers = append(servers, got...)
+		required++
 	}
 
+	servers = intersections(servers, required)
 	formatted := formatOutput(servers, *format)
 	for _, f := range formatted {
 		fmt.Println(f)
@@ -164,4 +169,32 @@ func formatOutput(results []*pb.ServerFile_Server, format string) []string {
 	}
 
 	return final
+}
+
+// Return only the server objects that match ALL the criteria provided.
+// required arg is the number of different criteria asked for, so servers
+// that appear in the collection that many times are what we're looking for.
+func intersections(s1 []*pb.ServerFile_Server, required int) []*pb.ServerFile_Server {
+	var match []*pb.ServerFile_Server
+	counts := make(map[string]int)
+	if len(s1) == 0 {
+		return match
+	}
+
+	for _, sv := range s1 {
+		counts[sv.Identifier]++
+	}
+
+	for k, v := range counts {
+		if v >= required {
+			for _, sv := range s1 {
+				if sv.GetIdentifier() == k {
+					match = append(match, sv)
+					break
+				}
+			}
+		}
+	}
+
+	return match
 }
