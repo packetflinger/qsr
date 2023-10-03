@@ -146,6 +146,7 @@ func findByAddress(src *pb.ServerFile, address string) ([]*pb.ServerFile_Server,
 	return results, nil
 }
 
+// Substitute all the placeholders in the format
 func formatOutput(results []*pb.ServerFile_Server, format string) []string {
 	final := []string{}
 	for _, r := range results {
