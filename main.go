@@ -24,6 +24,11 @@ var (
 )
 
 func main() {
+	if len(os.Args) < 2 {
+		usage()
+		return
+	}
+
 	flag.Parse()
 	serverpb, err := loadConfig()
 	if err != nil {
@@ -69,6 +74,11 @@ func main() {
 	for _, f := range formatted {
 		fmt.Println(f)
 	}
+}
+
+func usage() {
+	fmt.Printf("Usage: %s [flags]\n", os.Args[0])
+	flag.PrintDefaults()
 }
 
 // Read the text-format proto config file and unmarshal it
