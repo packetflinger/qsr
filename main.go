@@ -20,6 +20,7 @@ var (
 	name        = flag.String("name", "", "Regex pattern for the name to lookup")
 	group       = flag.String("group", "", "Regex pattern for the group to lookoup")
 	address     = flag.String("address", "", "Regex pattern for the address to lookup")
+	union       = flag.Bool("union", false, "Combine results from multiple criteria")
 )
 
 func main() {
@@ -58,7 +59,12 @@ func main() {
 		required++
 	}
 
-	servers = intersections(servers, required)
+	if *union {
+		servers = unique(servers)
+	} else {
+		servers = intersections(servers, required)
+	}
+
 	formatted := formatOutput(servers, *format)
 	for _, f := range formatted {
 		fmt.Println(f)
@@ -197,4 +203,17 @@ func intersections(s1 []*pb.ServerFile_Server, required int) []*pb.ServerFile_Se
 	}
 
 	return match
+}
+
+// Remove any duplicates
+func unique(s1 []*pb.ServerFile_Server) []*pb.ServerFile_Server {
+	var newlist []*pb.ServerFile_Server
+	seen := make(map[string]bool)
+	for _, sv := range s1 {
+		if _, ok := seen[sv.GetIdentifier()]; !ok {
+			seen[sv.GetIdentifier()] = true
+			newlist = append(newlist, sv)
+		}
+	}
+	return newlist
 }
