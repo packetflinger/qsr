@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path"
 	"regexp"
 	"strings"
 
@@ -87,11 +88,10 @@ func loadConfig() (*pb.ServerFile, error) {
 
 	if *config == "" {
 		homedir, err := os.UserHomeDir()
-		sep := os.PathSeparator
 		if err != nil {
 			return nil, err
 		}
-		*config = fmt.Sprintf("%s%c%s", homedir, sep, serversFile)
+		*config = path.Join(homedir, serversFile)
 	}
 
 	raw, err := os.ReadFile(*config)
