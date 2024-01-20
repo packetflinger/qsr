@@ -185,6 +185,9 @@ func formatOutput(results []*pb.ServerFile_Server, format string) []string {
 		if strings.Contains(format, "%l") {
 			formatted = strings.ReplaceAll(formatted, "%l", r.GetLogFile())
 		}
+		if strings.Contains(format, "%g") {
+			formatted = strings.ReplaceAll(formatted, "%g", strings.Join(r.GetGroups(), ","))
+		}
 		final = append(final, formatted)
 	}
 
